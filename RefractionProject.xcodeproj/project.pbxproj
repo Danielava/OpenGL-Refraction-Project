@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7F5004FB246491C90006004E /* libassimp.5.0.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F5004FA246491C90006004E /* libassimp.5.0.0.dylib */; };
 		7F83F2B5245DDD1A00C3BD8B /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 7F83F2B4245DDD1A00C3BD8B /* main.cpp */; };
 		7F83F2BC245DDD3A00C3BD8B /* glad.c in Sources */ = {isa = PBXBuildFile; fileRef = 7F83F2BB245DDD3A00C3BD8B /* glad.c */; };
 		7F83F2BF245DDEAE00C3BD8B /* libglfw.3.3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F83F2BE245DDEAE00C3BD8B /* libglfw.3.3.dylib */; };
@@ -26,6 +27,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7F5004FA246491C90006004E /* libassimp.5.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.5.0.0.dylib; path = ../../../../../../usr/local/Cellar/assimp/5.0.1/lib/libassimp.5.0.0.dylib; sourceTree = "<group>"; };
+		7F5004FD246498BF0006004E /* mesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
+		7F5004FF2466E39B0006004E /* model.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = model.hpp; sourceTree = "<group>"; };
 		7F83F2B1245DDD1A00C3BD8B /* RefractionProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RefractionProject; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F83F2B4245DDD1A00C3BD8B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		7F83F2BB245DDD3A00C3BD8B /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
@@ -256,6 +260,17 @@
 		7F83F3AF2461C28500C3BD8B /* reciprocal.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reciprocal.hpp; sourceTree = "<group>"; };
 		7F83F3B02461C28500C3BD8B /* projection.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = projection.inl; sourceTree = "<group>"; };
 		7F83F3B12461C28500C3BD8B /* multiple.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = multiple.inl; sourceTree = "<group>"; };
+		7FA2184F2469DCA900F6B2B4 /* EgyptCat.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EgyptCat.mtl; sourceTree = "<group>"; };
+		7FA218502469DCA900F6B2B4 /* EgyptCat.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EgyptCat.obj; sourceTree = "<group>"; };
+		7FA218512469E4DB00F6B2B4 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
+		7FA21853246A860600F6B2B4 /* specular.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = specular.jpg; sourceTree = "<group>"; };
+		7FA21854246A860700F6B2B4 /* normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = normal.png; sourceTree = "<group>"; };
+		7FA21855246A860700F6B2B4 /* backpack.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = backpack.obj; sourceTree = "<group>"; };
+		7FA21856246A860700F6B2B4 /* roughness.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = roughness.jpg; sourceTree = "<group>"; };
+		7FA21857246A860700F6B2B4 /* ao.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ao.jpg; sourceTree = "<group>"; };
+		7FA21858246A860700F6B2B4 /* source_attribution.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = source_attribution.txt; sourceTree = "<group>"; };
+		7FA21859246A860700F6B2B4 /* backpack.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = backpack.mtl; sourceTree = "<group>"; };
+		7FA2185A246A860800F6B2B4 /* diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = diffuse.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -263,6 +278,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7F5004FB246491C90006004E /* libassimp.5.0.0.dylib in Frameworks */,
 				7F83F2BF245DDEAE00C3BD8B /* libglfw.3.3.dylib in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -290,6 +306,7 @@
 		7F83F2B3245DDD1A00C3BD8B /* RefractionProject */ = {
 			isa = PBXGroup;
 			children = (
+				7FA2184D2469DC8F00F6B2B4 /* models */,
 				7F83F2BB245DDD3A00C3BD8B /* glad.c */,
 				7F83F2B4245DDD1A00C3BD8B /* main.cpp */,
 				7F83F2CA2461725600C3BD8B /* fshader.txt */,
@@ -297,6 +314,9 @@
 				7F83F2CB246183E000C3BD8B /* shader.cpp */,
 				7F83F2CC246183E000C3BD8B /* shader.hpp */,
 				7F83F2CE2461C28400C3BD8B /* glm */,
+				7F5004FD246498BF0006004E /* mesh.h */,
+				7F5004FF2466E39B0006004E /* model.hpp */,
+				7FA218512469E4DB00F6B2B4 /* stb_image.h */,
 			);
 			path = RefractionProject;
 			sourceTree = "<group>";
@@ -304,6 +324,7 @@
 		7F83F2BD245DDEAE00C3BD8B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				7F5004FA246491C90006004E /* libassimp.5.0.0.dylib */,
 				7F83F2BE245DDEAE00C3BD8B /* libglfw.3.3.dylib */,
 			);
 			name = Frameworks;
@@ -570,6 +591,39 @@
 			path = gtx;
 			sourceTree = "<group>";
 		};
+		7FA2184D2469DC8F00F6B2B4 /* models */ = {
+			isa = PBXGroup;
+			children = (
+				7FA21852246A85EE00F6B2B4 /* backpack */,
+				7FA2184E2469DC9800F6B2B4 /* cat */,
+			);
+			path = models;
+			sourceTree = "<group>";
+		};
+		7FA2184E2469DC9800F6B2B4 /* cat */ = {
+			isa = PBXGroup;
+			children = (
+				7FA2184F2469DCA900F6B2B4 /* EgyptCat.mtl */,
+				7FA218502469DCA900F6B2B4 /* EgyptCat.obj */,
+			);
+			path = cat;
+			sourceTree = "<group>";
+		};
+		7FA21852246A85EE00F6B2B4 /* backpack */ = {
+			isa = PBXGroup;
+			children = (
+				7FA21857246A860700F6B2B4 /* ao.jpg */,
+				7FA21859246A860700F6B2B4 /* backpack.mtl */,
+				7FA21855246A860700F6B2B4 /* backpack.obj */,
+				7FA2185A246A860800F6B2B4 /* diffuse.jpg */,
+				7FA21854246A860700F6B2B4 /* normal.png */,
+				7FA21856246A860700F6B2B4 /* roughness.jpg */,
+				7FA21858246A860700F6B2B4 /* source_attribution.txt */,
+				7FA21853246A860600F6B2B4 /* specular.jpg */,
+			);
+			path = backpack;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -753,6 +807,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/glfw/3.3.2/lib,
+					/usr/local/Cellar/assimp/5.0.1/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -766,6 +821,7 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					/usr/local/Cellar/glfw/3.3.2/lib,
+					/usr/local/Cellar/assimp/5.0.1/lib,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};

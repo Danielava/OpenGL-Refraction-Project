@@ -5,9 +5,10 @@
 #include "shader.hpp"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp" //For matrix transformations
-
+#include "model.hpp"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void processInput(GLFWwindow *window);
 
 // A 3D cube
 float vertices[] = {
@@ -55,13 +56,17 @@ float vertices[] = {
 };
 
 //vec3 color(0.7f, 0.5f, 0.2f);
+glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
+glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
 int main()
 {
+    
     GLFWwindow* window;
-    const int SCREEN_HEIGHT = 640;
-    const int SCREEN_WIDTH = 480;
-
+    const int SCREEN_HEIGHT = 600;
+    const int SCREEN_WIDTH = 800;
+    
     // Initialize the library
     if(!glfwInit())
         return -1;
@@ -73,14 +78,14 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
     // Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(SCREEN_HEIGHT, SCREEN_WIDTH, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", NULL, NULL);
     if (!window)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
         glfwTerminate();
         return -1;
     }
-
+    
     // Mathe the window's context current
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -95,7 +100,9 @@ int main()
     glEnable(GL_DEPTH_TEST);
     //Create a shader using our shader class
     Shader shader("vshader.txt", "fshader.txt");
-  
+    //Model catModel("models/cat/EgyptCat.obj");
+    Model backPack("models/backpack/backpack.obj");
+    
     unsigned int VBO, VAO;
     //Generate a Vertex buffer object (only 1 as described by param1)
     glGenBuffers(1, &VBO);
@@ -110,6 +117,7 @@ int main()
     //Linking vertex attributes to the input of vertex shader (first param is location=0)
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
     
     // Initialize the OpenGL API with GLAD
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -117,7 +125,7 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-    
+    glUseProgram(shader.ID);
     /*
         Drawing in 3D.
         1. We need a model matrix, which turns local coordinates to world coordinates.
@@ -127,34 +135,74 @@ int main()
         3. Projection matrix (perspective or orthographic)
     */
     glm::mat4 projection = glm::mat4(1.0f);
-    projection = glm::perspective(glm::radians(180.0f), (float)SCREEN_HEIGHT/(float)SCREEN_WIDTH, 0.1f, 200.0f); //first param is field of view
+    projection = glm::perspective(glm::radians(180.0f), (float)SCREEN_WIDTH/(float)SCREEN_HEIGHT, 0.1f, 1000.0f); //first param is field of view
     
     shader.use(); //Activate the shader before setting its values! important
     //Set the matrices to vertice shaders uniform variables
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
     
+    
+    
     // Loop until the user closes the window
     while(!glfwWindowShouldClose(window))
     {
+        //Input
+        processInput(window);
+        
         // Render here!
         glEnable(GL_DEPTH_TEST);
         glClearColor(0.0f, 0.1f, 0.0f, 0.3f);
         glClear(GL_COLOR_BUFFER_BIT |GL_DEPTH_BUFFER_BIT);
         glUseProgram(shader.ID);
         
-        glm::mat4 model = glm::mat4(1.0f);
-        glm::mat4 view  = glm::mat4(1.0f);
-        model = glm::rotate(model, (float)glfwGetTime()*50.0f, glm::vec3(1.0f, 1.0f, 1.0f));
-        view = glm::translate(view, glm::vec3(0.0f, 0.0f, -100.0f)); //Moves the scene back a bit
-        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        //Camera settings
+        const float radius = 150.0f; //Lower this to make object come closer
+        float speed = 0.5f;
+        float camX = sin(glfwGetTime()*speed) * radius;
+        float camZ = cos(glfwGetTime()*speed) * radius;
+        glm::mat4 view;
+        //view = glm::lookAt(40.0f*cameraPos, cameraPos + cameraFront, cameraUp);
+        view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, &view[0][0]);
         
+        //CODE FOR CUBE
+        /*
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, glm::radians(20.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+        //view = glm::translate(view, glm::vec3(1.5f*cos(time*0.2f), 1.5f*sin(time*0.2f), -100.0f)); //Moves the scene back a bit
+        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        */
+        
+        //THIS IS FOR 3D MODEL!
+         // render the loaded model
+        /*
+         glm::mat4 model = glm::mat4(1.0f);
+         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));    // it's a bit too big for our scene, so scale it down
+         shader.setMat4("model", model);
+        */
+        
+        //THIS IS FOR 3D MODEL!
+        
+        //glm::mat4 projection = glm::perspective(glm::radians(0.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+        //glm::mat4 view = glm::mat4(1.0f);
+        //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -100.0f)); //Moves the scene back a bit
+        //glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
+        //glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, &view[0][0]);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));    // it's a bit too big for our scene, so scale it down
+        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        
+         
         /*
          Remember the vertices have gone through the shaders and are being colored
          so when finally drawing the cube, the shaders will have done the job before it's drawn.
         */
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36); //36 is # vertices
+        //glBindVertexArray(VAO); //Put this before Drawing
+        //catModel.Draw(shader);
+        backPack.Draw(shader);
+        //glDrawArrays(GL_TRIANGLES, 0, 36); //36 is # vertices
         
         // Swap front and back buffers
         glfwSwapBuffers(window);
@@ -178,4 +226,18 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width
     // and height will be significantly larger than specified on retina displays
     glViewport(0, 0, width, height);
+}
+
+void processInput(GLFWwindow *window) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+    const float cameraSpeed = 0.05f;
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        cameraPos += cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        cameraPos -= cameraSpeed * cameraFront;
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        cameraPos -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        cameraPos += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 }
