@@ -260,8 +260,6 @@
 		7F83F3AF2461C28500C3BD8B /* reciprocal.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = reciprocal.hpp; sourceTree = "<group>"; };
 		7F83F3B02461C28500C3BD8B /* projection.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = projection.inl; sourceTree = "<group>"; };
 		7F83F3B12461C28500C3BD8B /* multiple.inl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = multiple.inl; sourceTree = "<group>"; };
-		7FA2184F2469DCA900F6B2B4 /* EgyptCat.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EgyptCat.mtl; sourceTree = "<group>"; };
-		7FA218502469DCA900F6B2B4 /* EgyptCat.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EgyptCat.obj; sourceTree = "<group>"; };
 		7FA218512469E4DB00F6B2B4 /* stb_image.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = stb_image.h; sourceTree = "<group>"; };
 		7FA21853246A860600F6B2B4 /* specular.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = specular.jpg; sourceTree = "<group>"; };
 		7FA21854246A860700F6B2B4 /* normal.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = normal.png; sourceTree = "<group>"; };
@@ -271,6 +269,8 @@
 		7FA21858246A860700F6B2B4 /* source_attribution.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = source_attribution.txt; sourceTree = "<group>"; };
 		7FA21859246A860700F6B2B4 /* backpack.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = backpack.mtl; sourceTree = "<group>"; };
 		7FA2185A246A860800F6B2B4 /* diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = diffuse.jpg; sourceTree = "<group>"; };
+		7FA2185D246B34A100F6B2B4 /* cat.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cat.mtl; sourceTree = "<group>"; };
+		7FA2185E246B34A200F6B2B4 /* cat.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cat.obj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -603,8 +603,8 @@
 		7FA2184E2469DC9800F6B2B4 /* cat */ = {
 			isa = PBXGroup;
 			children = (
-				7FA2184F2469DCA900F6B2B4 /* EgyptCat.mtl */,
-				7FA218502469DCA900F6B2B4 /* EgyptCat.obj */,
+				7FA2185D246B34A100F6B2B4 /* cat.mtl */,
+				7FA2185E246B34A200F6B2B4 /* cat.obj */,
 			);
 			path = cat;
 			sourceTree = "<group>";

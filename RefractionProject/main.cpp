@@ -100,8 +100,8 @@ int main()
     glEnable(GL_DEPTH_TEST);
     //Create a shader using our shader class
     Shader shader("vshader.txt", "fshader.txt");
-    //Model catModel("models/cat/EgyptCat.obj");
-    Model backPack("models/backpack/backpack.obj");
+    Model catModel("models/cat/cat.obj");
+    //Model backPack("models/backpack/backpack.obj");
     
     unsigned int VBO, VAO;
     //Generate a Vertex buffer object (only 1 as described by param1)
@@ -200,8 +200,8 @@ int main()
          so when finally drawing the cube, the shaders will have done the job before it's drawn.
         */
         //glBindVertexArray(VAO); //Put this before Drawing
-        //catModel.Draw(shader);
-        backPack.Draw(shader);
+        catModel.Draw(shader);
+        //backPack.Draw(shader);
         //glDrawArrays(GL_TRIANGLES, 0, 36); //36 is # vertices
         
         // Swap front and back buffers
