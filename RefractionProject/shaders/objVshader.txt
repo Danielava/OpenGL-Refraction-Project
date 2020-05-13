@@ -4,7 +4,7 @@ layout (location = 1) in vec3 aNormal;
 layout (location = 2) in vec2 aTexCoords;
 
 out vec2 TexCoords;
-out vec4 Pos;
+out vec3 Pos;
 out vec3 Normal;
 
 uniform mat4 model;
@@ -14,7 +14,7 @@ uniform mat4 projection;
 void main()
 {
     TexCoords = aTexCoords;
-    Pos = vec4(aPos, 1.0f);
-    Normal = aNormal;
+    Pos = vec3(model * vec4(aPos, 1.0)); //Pos needs to be in world space, here aPos becomes vec4 so we can multiply with 4x4 model matrix
+    Normal = mat3(transpose(inverse(model))) * aNormal; //Multiply with normal matrix
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

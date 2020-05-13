@@ -70,13 +70,24 @@ vector<std::string> faces
 
 vector<std::string> faces
 {
+    "skybox/space2/right.jpg",
+    "skybox/space2/left.jpg",
+    "skybox/space2/top.jpg",
+    "skybox/space2/bottom.jpg",
+    "skybox/space2/front.jpg",
+    "skybox/space2/back.jpg"
+};
+
+/*
+vector<std::string> faces
+{
     "skybox/sky/right.jpg",
     "skybox/sky/left.jpg",
     "skybox/sky/top.jpg",
     "skybox/sky/bottom.jpg",
     "skybox/sky/front.jpg",
     "skybox/sky/back.jpg"
-};
+};*/
 
 //vec3 color(0.7f, 0.5f, 0.2f);
 glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
@@ -174,6 +185,9 @@ int main()
     shader.use(); //Activate the shader before setting its values! important
     //Set the matrices to vertice shaders uniform variables
     glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
+    //Put in the uniform variables inside the shaders
+    glUniform1i(glGetUniformLocation(shader.ID, "skybox"), 0);
+    glUniform3fv(glGetUniformLocation(shader.ID, "cameraPos"), 1, &cameraPos[0]); //param2 = 1 because we are putting in 1 vec3
     
     
     
@@ -199,7 +213,7 @@ int main()
         view = glm::lookAt(40.0f*cameraPos, cameraPos + cameraFront, cameraUp);
         //view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, &view[0][0]);
-        
+        glUniform3fv(glGetUniformLocation(shader.ID, "cameraPos"), 1, &cameraPos[0]); //Update uniform cameraPos in fragment shader every frame
         //CODE FOR CUBE
         /*
         glm::mat4 model = glm::mat4(1.0f);
@@ -306,7 +320,8 @@ unsigned int loadCubemap(vector<std::string> faces) {
     for(GLuint i = 0; i < faces.size(); i++) {
         data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
         if(data) {
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            //If you use sky, change GL_RGBA to GL_RGB
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
         } else {
             std::cout << "Cubemap texture failed to load at path: " << faces[i] <<std::endl;

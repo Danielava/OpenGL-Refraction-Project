@@ -285,6 +285,12 @@
 		7FA21874246C45C000F6B2B4 /* bottom.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bottom.jpg; sourceTree = "<group>"; };
 		7FA21875246C45C000F6B2B4 /* back.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back.jpg; sourceTree = "<group>"; };
 		7FA21876246C45C000F6B2B4 /* front.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = front.jpg; sourceTree = "<group>"; };
+		7FA21878246C55C500F6B2B4 /* top.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = top.jpg; sourceTree = "<group>"; };
+		7FA21879246C55C500F6B2B4 /* front.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = front.jpg; sourceTree = "<group>"; };
+		7FA2187A246C55C500F6B2B4 /* bottom.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bottom.jpg; sourceTree = "<group>"; };
+		7FA2187B246C55C500F6B2B4 /* back.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back.jpg; sourceTree = "<group>"; };
+		7FA2187C246C55C600F6B2B4 /* left.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = left.jpg; sourceTree = "<group>"; };
+		7FA2187D246C55C600F6B2B4 /* right.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = right.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -641,6 +647,7 @@
 		7FA2185F246C29CD00F6B2B4 /* skybox */ = {
 			isa = PBXGroup;
 			children = (
+				7FA21877246C55AF00F6B2B4 /* space2 */,
 				7FA2186A246C419900F6B2B4 /* sky */,
 				7FA21869246C3E0D00F6B2B4 /* space */,
 			);
@@ -682,6 +689,19 @@
 				7FA2186F246C41AE00F6B2B4 /* top.jpg */,
 			);
 			path = sky;
+			sourceTree = "<group>";
+		};
+		7FA21877246C55AF00F6B2B4 /* space2 */ = {
+			isa = PBXGroup;
+			children = (
+				7FA2187B246C55C500F6B2B4 /* back.jpg */,
+				7FA2187A246C55C500F6B2B4 /* bottom.jpg */,
+				7FA21879246C55C500F6B2B4 /* front.jpg */,
+				7FA2187C246C55C600F6B2B4 /* left.jpg */,
+				7FA2187D246C55C600F6B2B4 /* right.jpg */,
+				7FA21878246C55C500F6B2B4 /* top.jpg */,
+			);
+			path = space2;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
