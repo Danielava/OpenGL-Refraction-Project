@@ -34,8 +34,8 @@
 		7F83F2B4245DDD1A00C3BD8B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		7F83F2BB245DDD3A00C3BD8B /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
 		7F83F2BE245DDEAE00C3BD8B /* libglfw.3.3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libglfw.3.3.dylib; path = ../../../../../../usr/local/Cellar/glfw/3.3.2/lib/libglfw.3.3.dylib; sourceTree = "<group>"; };
-		7F83F2C92461725600C3BD8B /* vshader.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = vshader.txt; sourceTree = "<group>"; };
-		7F83F2CA2461725600C3BD8B /* fshader.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = fshader.txt; sourceTree = "<group>"; };
+		7F83F2C92461725600C3BD8B /* objVshader.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = objVshader.txt; sourceTree = "<group>"; };
+		7F83F2CA2461725600C3BD8B /* objFshader.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = objFshader.txt; sourceTree = "<group>"; };
 		7F83F2CB246183E000C3BD8B /* shader.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = shader.cpp; sourceTree = "<group>"; };
 		7F83F2CC246183E000C3BD8B /* shader.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = shader.hpp; sourceTree = "<group>"; };
 		7F83F2CF2461C28400C3BD8B /* CMakeLists.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CMakeLists.txt; sourceTree = "<group>"; };
@@ -271,6 +271,20 @@
 		7FA2185A246A860800F6B2B4 /* diffuse.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = diffuse.jpg; sourceTree = "<group>"; };
 		7FA2185D246B34A100F6B2B4 /* cat.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cat.mtl; sourceTree = "<group>"; };
 		7FA2185E246B34A200F6B2B4 /* cat.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cat.obj; sourceTree = "<group>"; };
+		7FA21867246C379C00F6B2B4 /* skyboxVshader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = skyboxVshader.txt; sourceTree = "<group>"; };
+		7FA21868246C379C00F6B2B4 /* skyboxFshader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = skyboxFshader.txt; sourceTree = "<group>"; };
+		7FA2186B246C41AE00F6B2B4 /* left.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = left.jpg; sourceTree = "<group>"; };
+		7FA2186C246C41AE00F6B2B4 /* right.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = right.jpg; sourceTree = "<group>"; };
+		7FA2186D246C41AE00F6B2B4 /* front.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = front.jpg; sourceTree = "<group>"; };
+		7FA2186E246C41AE00F6B2B4 /* back.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back.jpg; sourceTree = "<group>"; };
+		7FA2186F246C41AE00F6B2B4 /* top.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = top.jpg; sourceTree = "<group>"; };
+		7FA21870246C41AE00F6B2B4 /* bottom.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bottom.jpg; sourceTree = "<group>"; };
+		7FA21871246C45C000F6B2B4 /* left.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = left.jpg; sourceTree = "<group>"; };
+		7FA21872246C45C000F6B2B4 /* right.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = right.jpg; sourceTree = "<group>"; };
+		7FA21873246C45C000F6B2B4 /* top.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = top.jpg; sourceTree = "<group>"; };
+		7FA21874246C45C000F6B2B4 /* bottom.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = bottom.jpg; sourceTree = "<group>"; };
+		7FA21875246C45C000F6B2B4 /* back.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back.jpg; sourceTree = "<group>"; };
+		7FA21876246C45C000F6B2B4 /* front.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = front.jpg; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -306,11 +320,11 @@
 		7F83F2B3245DDD1A00C3BD8B /* RefractionProject */ = {
 			isa = PBXGroup;
 			children = (
+				7FA21866246C374600F6B2B4 /* shaders */,
+				7FA2185F246C29CD00F6B2B4 /* skybox */,
 				7FA2184D2469DC8F00F6B2B4 /* models */,
 				7F83F2BB245DDD3A00C3BD8B /* glad.c */,
 				7F83F2B4245DDD1A00C3BD8B /* main.cpp */,
-				7F83F2CA2461725600C3BD8B /* fshader.txt */,
-				7F83F2C92461725600C3BD8B /* vshader.txt */,
 				7F83F2CB246183E000C3BD8B /* shader.cpp */,
 				7F83F2CC246183E000C3BD8B /* shader.hpp */,
 				7F83F2CE2461C28400C3BD8B /* glm */,
@@ -622,6 +636,52 @@
 				7FA21853246A860600F6B2B4 /* specular.jpg */,
 			);
 			path = backpack;
+			sourceTree = "<group>";
+		};
+		7FA2185F246C29CD00F6B2B4 /* skybox */ = {
+			isa = PBXGroup;
+			children = (
+				7FA2186A246C419900F6B2B4 /* sky */,
+				7FA21869246C3E0D00F6B2B4 /* space */,
+			);
+			path = skybox;
+			sourceTree = "<group>";
+		};
+		7FA21866246C374600F6B2B4 /* shaders */ = {
+			isa = PBXGroup;
+			children = (
+				7F83F2CA2461725600C3BD8B /* objFshader.txt */,
+				7F83F2C92461725600C3BD8B /* objVshader.txt */,
+				7FA21868246C379C00F6B2B4 /* skyboxFshader.txt */,
+				7FA21867246C379C00F6B2B4 /* skyboxVshader.txt */,
+			);
+			path = shaders;
+			sourceTree = "<group>";
+		};
+		7FA21869246C3E0D00F6B2B4 /* space */ = {
+			isa = PBXGroup;
+			children = (
+				7FA21875246C45C000F6B2B4 /* back.jpg */,
+				7FA21874246C45C000F6B2B4 /* bottom.jpg */,
+				7FA21876246C45C000F6B2B4 /* front.jpg */,
+				7FA21871246C45C000F6B2B4 /* left.jpg */,
+				7FA21872246C45C000F6B2B4 /* right.jpg */,
+				7FA21873246C45C000F6B2B4 /* top.jpg */,
+			);
+			path = space;
+			sourceTree = "<group>";
+		};
+		7FA2186A246C419900F6B2B4 /* sky */ = {
+			isa = PBXGroup;
+			children = (
+				7FA2186E246C41AE00F6B2B4 /* back.jpg */,
+				7FA21870246C41AE00F6B2B4 /* bottom.jpg */,
+				7FA2186D246C41AE00F6B2B4 /* front.jpg */,
+				7FA2186B246C41AE00F6B2B4 /* left.jpg */,
+				7FA2186C246C41AE00F6B2B4 /* right.jpg */,
+				7FA2186F246C41AE00F6B2B4 /* top.jpg */,
+			);
+			path = sky;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
