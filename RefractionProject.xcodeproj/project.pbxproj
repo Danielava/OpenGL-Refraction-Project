@@ -291,6 +291,8 @@
 		7FA2187B246C55C500F6B2B4 /* back.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = back.jpg; sourceTree = "<group>"; };
 		7FA2187C246C55C600F6B2B4 /* left.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = left.jpg; sourceTree = "<group>"; };
 		7FA2187D246C55C600F6B2B4 /* right.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = right.jpg; sourceTree = "<group>"; };
+		7FA2187E246DDBEC00F6B2B4 /* normFshader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = normFshader.txt; sourceTree = "<group>"; };
+		7FA2187F246DDBEC00F6B2B4 /* normVshader.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = normVshader.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -661,6 +663,8 @@
 				7F83F2C92461725600C3BD8B /* objVshader.txt */,
 				7FA21868246C379C00F6B2B4 /* skyboxFshader.txt */,
 				7FA21867246C379C00F6B2B4 /* skyboxVshader.txt */,
+				7FA2187E246DDBEC00F6B2B4 /* normFshader.txt */,
+				7FA2187F246DDBEC00F6B2B4 /* normVshader.txt */,
 			);
 			path = shaders;
 			sourceTree = "<group>";

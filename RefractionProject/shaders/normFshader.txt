@@ -1,0 +1,16 @@
+#version 330 core
+layout(location = 0) out vec4 color; //Writing to this variable will write to the texture
+//out vec4 FragColor;
+
+in vec2 TexCoords;
+in vec3 Pos;
+in vec3 Normal;
+
+uniform sampler2D texture_diffuse1;
+
+void main()
+{
+    color = vec4(Normal.x, Normal.y, Normal.z, 1.0); //Refraction
+    //color = vec3(0.0, 1.0, 0.0); //Refraction
+    //FragColor = vec4(color, 1.0);
+}

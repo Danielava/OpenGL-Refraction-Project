@@ -4,10 +4,13 @@ out vec4 FragColor;
 in vec2 TexCoords;
 in vec3 Pos;
 in vec3 Normal;
+in vec2 uv;
 
 uniform sampler2D texture_diffuse1;
 uniform vec3 cameraPos;
 uniform samplerCube skybox;
+
+uniform sampler2D normalFrontTexture;
 
 void main()
 {
@@ -16,5 +19,10 @@ void main()
     float ratio = 1.00/1.309;
     vec3 I = normalize(Pos - cameraPos);
     vec3 R = refract(I, normalize(Normal), ratio);
-    FragColor = vec4(texture(skybox, R).rgb, 1.0); //Refraction
+    //FragColor = vec4(texture(skybox, R).rgb, 1.0); //Refraction
+    //FragColor = vec4(texture(normalFrontTexture, gl_FragCoord.xy)); //changing to gl_FragCoord.xyz fixes problem but still error...
+    //FragColor = vec4(texture(normalFrontTexture, coord).rgb, 1.0);
+    //vec2 uvx = (gl_FragCoord.xy / vec2(2.*800.0, 2.*600.0));
+    vec2 uvx = (gl_FragCoord.xy / vec2(800.0, 600.0));
+    FragColor = vec4(texture(normalFrontTexture, uvx));
 }

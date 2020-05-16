@@ -10,6 +10,7 @@
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow *window);
 unsigned int loadCubemap(vector<std::string> faces);
+unsigned int setupNormalMapFrontVAO(unsigned int VAO);
 
 // A 3D cube
 float skyboxVertices[] = {
@@ -56,6 +57,22 @@ float skyboxVertices[] = {
      1.0f, -1.0f,  1.0f
 };
 
+/*
+    Will use this structure for the normal and depth maps (front & back).
+    It's like a screen we can render the texture to (save values on),
+    to then pick the values with uv-coordinates.
+*/
+float quadVertices[] = { // vertex attributes for a quad that fills the entire screen in Normalized Device Coordinates.
+    // positions   // texCoords
+    -1.0f,  1.0f,  0.0f, 1.0f,
+    -1.0f, -1.0f,  0.0f, 0.0f,
+     1.0f, -1.0f,  1.0f, 0.0f,
+
+    -1.0f,  1.0f,  0.0f, 1.0f,
+     1.0f, -1.0f,  1.0f, 0.0f,
+     1.0f,  1.0f,  1.0f, 1.0f
+};
+
 //Paths to faces of the cubemap
 /*
 vector<std::string> faces
@@ -64,10 +81,11 @@ vector<std::string> faces
     "skybox/space/left.jpg",
     "skybox/space/top.jpg",
     "skybox/space/bottom.jpg",
-    "skybox/space/back.jpg",
-    "skybox/space/front.jpg"
+    "skybox/space/front.jpg",
+    "skybox/space/back.jpg"
 };*/
 
+/*
 vector<std::string> faces
 {
     "skybox/space2/right.jpg",
@@ -77,8 +95,9 @@ vector<std::string> faces
     "skybox/space2/front.jpg",
     "skybox/space2/back.jpg"
 };
+*/
 
-/*
+
 vector<std::string> faces
 {
     "skybox/sky/right.jpg",
@@ -87,19 +106,19 @@ vector<std::string> faces
     "skybox/sky/bottom.jpg",
     "skybox/sky/front.jpg",
     "skybox/sky/back.jpg"
-};*/
+};
 
 //vec3 color(0.7f, 0.5f, 0.2f);
 glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
+const int SCREEN_HEIGHT = 600;
+const int SCREEN_WIDTH = 800;
+
 int main()
 {
-    
     GLFWwindow* window;
-    const int SCREEN_HEIGHT = 600;
-    const int SCREEN_WIDTH = 800;
     
     // Initialize the library
     if(!glfwInit())
@@ -130,30 +149,13 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
-    
+    //glViewport(0, 0, SCREEN_WIDTH*2.0, SCREEN_HEIGHT*2.0);
     glEnable(GL_DEPTH_TEST);
     //Create a shader using our shader class
     Shader shader("shaders/objVshader.txt", "shaders/objFshader.txt");
     Shader skyboxShader("shaders/skyboxVshader.txt", "shaders/skyboxFshader.txt");
     Model catModel("models/cat/cat.obj");
     //Model backPack("models/backpack/backpack.obj");
-    
-    /*
-    unsigned int VBO, VAO;
-    //Generate a Vertex buffer object (only 1 as described by param1)
-    glGenBuffers(1, &VBO);
-    //Adding a VAO made the render work
-    glGenVertexArrays(1, &VAO);
-    glBindVertexArray(VAO);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    //From now on, any buffer function call on the GL_ARRAY_BUFFER (which holds the VBO), will configure the current VBO.
-    //Put data on the GPU
-    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
-    //Linking vertex attributes to the input of vertex shader (first param is location=0)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    */
     
     //VAO and VBO for skybox
     unsigned int skyboxVAO, skyboxVBO;
@@ -168,7 +170,7 @@ int main()
     unsigned int cubemapTexture = loadCubemap(faces);
     skyboxShader.use();
     //set the int
-    glUniform1i(glGetUniformLocation(skyboxShader.ID, "skybox"), 0);
+    glUniform1i(glGetUniformLocation(skyboxShader.ID, "skybox"), 0); //0 represents GL_TEXTURE0
     
     glUseProgram(shader.ID);
     /*
@@ -189,31 +191,143 @@ int main()
     glUniform1i(glGetUniformLocation(shader.ID, "skybox"), 0);
     glUniform3fv(glGetUniformLocation(shader.ID, "cameraPos"), 1, &cameraPos[0]); //param2 = 1 because we are putting in 1 vec3
     
+    /*
+     Generate your normal and depth textures here.
+     Create a VAO for each of the settings. When you have done that you can simply call
+     that VAO with glBindVertexArray(thisVAO) and draw => catModel.Draw() and the catmodel will
+     be drawn on that texture.
+    */
+    /*
+    unsigned int normalFrontVAO, normalFrontFB; //FB stands for framebuffer
+    glGenVertexArrays(1, &normalFrontVAO);
+    glBindVertexArray(normalFrontVAO);
+    normalFrontFB = setupNormalMapFrontVAO(normalFrontVAO); //Put the normalFrontTexture into refraction shader uniform variable
+    Shader normalShader("shaders/normVshader.txt", "shaders/normFshader.txt");
+    */
+    Shader normalShader("shaders/normVshader.txt", "shaders/normFshader.txt");
+    normalShader.use(); //Remember to activate it first!
+    glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
     
+    //PUT ALL TEXTURES INSIDE THE REFRACTION SHADER!
+    //glUniform1f(glGetUniformLocation(shader.ID, "normalFrontTexture"), normalFrontTexture);
+    unsigned int framebuffer;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    // create a color attachment texture
+    unsigned int textureColorbuffer;
+    glGenTextures(1, &textureColorbuffer);
+    /*
+     Here we must bind the texture, and then if we want to pass the
+     texture to the default shader we do.
+     1. shader.use();
+     2. glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0??);
+    */
+    glActiveTexture(GL_TEXTURE0 + 0); //Default at 0, here we just set the texture unit of the shader, this unit (0) is used later in glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0); when we want to assign the shader uniform variable to THIS texture-
+        //Also GL_TEXTURE0 + 2 = GL_TEXTURE2
+    glBindTexture(GL_TEXTURE_2D, textureColorbuffer); //Just remember the openGL process is always, unsigned int X, glgenerateObj(1,&X), glBindObj(GL_BUILT_IN_VALUE_ X); Then you have created your object
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL); //Craete the texture, no data inside=NULL
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+    //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
     
+    //glViewport(0, 0, 1800.0, 1600.0);
+    //Attach your texture to the framebuffer's color buffer
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer, 0);
+    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+    unsigned int rbo;
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo); // now actually attach it
+    // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    
+    /*
+        Here we set the normalFrontTexture in default shader to the framebuffers texture.
+    */
+    
+    int width, height;
+    glfwGetFramebufferSize(window, &width, &height);
+    glViewport(0, 0, width, height);
+    
+    shader.use();
+    glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0); //0 is the texture unit. We set the framebuffer texture to unit 0 (which openGL does automatically).
     // Loop until the user closes the window
     while(!glfwWindowShouldClose(window))
     {
+        glEnable(GL_DEPTH_TEST);
         //Input
         processInput(window);
         
-        // Render here!
+        //Camera settings
+        const float radius = 150.0f; //Lower this to make object come closer
+        float speed = 0.2f;
+        float camX = sin(glfwGetTime()*speed) * radius;
+        float camZ = cos(glfwGetTime()*speed) * radius;
+        glm::mat4 view;
+        
+        //TURN THIS ON FOR MANUAL CAMERA MOVEMENT
+        view = glm::lookAt(40.0f*cameraPos, cameraPos + cameraFront, cameraUp);
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));    // it's a bit too big for our scene, so scale it down
+        
+        // first pass
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        //glViewport(0,0,100,100);
+        //glViewport(0, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT*2);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
+        glClearColor(1.0f, 0.1f, 0.1f, 1.0f);
+        //glViewport(0, 0, 800.0, 600.0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
+        //Draw the catModel with normalShader and it will end up in our framebuffer
+        //FATAL ERROR!!! I MUST DO SHADER.USE() BEFORE PUTTING IN THE VARIABLES!!!!!
+        normalShader.use();
+        glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        catModel.Draw(normalShader);
+        
+        //Second pass
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 = our main screen (default screen)
+        //glViewport(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+        //glDisable(GL_DEPTH_TEST);
+        //glDepthFunc(GL_LESS);
         glClearColor(0.0f, 0.1f, 0.0f, 0.3f);
         glClear(GL_COLOR_BUFFER_BIT |GL_DEPTH_BUFFER_BIT);
         shader.use();//glUseProgram(shader.ID);
         
-        //Camera settings
-        const float radius = 150.0f; //Lower this to make object come closer
-        float speed = 0.5f;
-        float camX = sin(glfwGetTime()*speed) * radius;
-        float camZ = cos(glfwGetTime()*speed) * radius;
-        glm::mat4 view;
-        view = glm::lookAt(40.0f*cameraPos, cameraPos + cameraFront, cameraUp);
-        //view = glm::lookAt(glm::vec3(camX, 0.0f, camZ), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, &view[0][0]);
         glUniform3fv(glGetUniformLocation(shader.ID, "cameraPos"), 1, &cameraPos[0]); //Update uniform cameraPos in fragment shader every frame
+        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, &view[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        //glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0);
+        //glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0);
+        catModel.Draw(shader);
+        /*
+           AFTER SETTING THE MODEL, VIEW, PROJ MATRICES => RENDER YOUR TEXTURES
+           1. Front normals
+        */
+        /*
+        glBindVertexArray(normalFrontVAO); //Bind the corresponding VAO to use its settings.
+        glBindFramebuffer(GL_FRAMEBUFFER, normalFrontFB); //Bind them before drawing on them
+        //Turn on the shader that visualizes the normals
+        normalShader.use();
+        //Assign the relevant uniform variables in the shader
+        glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        //Draw your model
+        catModel.Draw(normalShader);
+        //The cat model has been drawn on the texture, repeat this process for the other side as well
+        */
+        //TURN THIS ON FOR AUTOMATIC CAMERA ROTATION AROUND OBJECT
+        /*
+        glm::vec3 rot = glm::vec3(camX, 0.0f, camZ);
+        view = glm::lookAt(rot, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        glUniform3fv(glGetUniformLocation(shader.ID, "cameraPos"), 1, &rot[0]); //Third param is probably wrong..
+        */
+        
         //CODE FOR CUBE
         /*
         glm::mat4 model = glm::mat4(1.0f);
@@ -231,26 +345,17 @@ int main()
          shader.setMat4("model", model);
         */
         
-        //THIS IS FOR 3D MODEL!
+        //Before drawing on your main screen, bind the default VAO and change to the default frameBuffer
+        //glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        //glBindVertexArray(VAO);
         
-        //glm::mat4 projection = glm::perspective(glm::radians(0.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
-        //glm::mat4 view = glm::mat4(1.0f);
-        //view = glm::translate(view, glm::vec3(0.0f, 0.0f, -100.0f)); //Moves the scene back a bit
-        //glUniformMatrix4fv(glGetUniformLocation(shader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
-        //glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, &view[0][0]);
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-        model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));    // it's a bit too big for our scene, so scale it down
-        glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        
-         
         /*
          Remember the vertices have gone through the shaders and are being colored
          so when finally drawing the cube, the shaders will have done the job before it's drawn.
         */
         //glBindVertexArray(VAO); //Put this before Drawing
         //glPolygonMode( GL_FRONT_AND_BACK, GL_LINE ); //To draw wireframe
-        catModel.Draw(shader);
+        //catModel.Draw(shader);
         //backPack.Draw(shader);
         //glDrawArrays(GL_TRIANGLES, 0, 36); //36 is # vertices
         
@@ -266,11 +371,10 @@ int main()
         // skybox cube
         glBindVertexArray(skyboxVAO);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture); //??? what does this do?
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glBindVertexArray(0);
         glDepthFunc(GL_LESS); // set depth function back to default
-        
         
         // Swap front and back buffers
         glfwSwapBuffers(window);
@@ -292,6 +396,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
     // make sure the viewport matches the new window dimensions; note that width
     // and height will be significantly larger than specified on retina displays
+    //glViewport(0, 0, width*2, height*2);
     glViewport(0, 0, width, height);
 }
 
@@ -321,7 +426,7 @@ unsigned int loadCubemap(vector<std::string> faces) {
         data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
         if(data) {
             //If you use sky, change GL_RGBA to GL_RGB
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
             stbi_image_free(data);
         } else {
             std::cout << "Cubemap texture failed to load at path: " << faces[i] <<std::endl;
@@ -337,3 +442,12 @@ unsigned int loadCubemap(vector<std::string> faces) {
     
     return textureID;
 }
+
+/*
+unsigned int createDepthMapFront() {
+    GLuint depthrenderbuffer;
+    glGenRenderbuffers(1, &depthrenderbuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, depthrenderbuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, 1024, 768);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthrenderbuffer);
+}*/
