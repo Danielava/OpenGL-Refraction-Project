@@ -113,8 +113,8 @@ glm::vec3 cameraPos   = glm::vec3(0.0f, 0.0f,  3.0f);
 glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 glm::vec3 cameraUp    = glm::vec3(0.0f, 1.0f,  0.0f);
 
-const int SCREEN_HEIGHT = 600;
-const int SCREEN_WIDTH = 800;
+const int SCREEN_HEIGHT = 1200;
+const int SCREEN_WIDTH = 1600;
 
 int main()
 {
@@ -129,9 +129,18 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
     glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
+    
+    /*
+        MacOS retina bug: The glfwCreateWindow function creates a window with double the dimensions you give it
+        for some reason. That's why I multiplied it with 0.5. This will correctly create a window with your given
+        values for width and height.
+        When creating the framebuffer and other stuff which uses SCREEN_WIDTH and SCREEN_HEIGHT variables,
+        there is no need to multiply them with 0.5. Only when first creating the window with glfwCreateWindow().
+        
+        NOTE: If this application is run on another operating system than macOS, you must probably remove the 0.5 from this function.
+    */
     // Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", NULL, NULL);
+    window = glfwCreateWindow(SCREEN_WIDTH*0.5, SCREEN_HEIGHT*0.5, "Hello World", NULL, NULL);
     if (!window)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -251,7 +260,8 @@ int main()
     
     int width, height;
     glfwGetFramebufferSize(window, &width, &height);
-    glViewport(0, 0, width, height);
+    //glViewport(0, 0, width*0.5, height*0.5);
+    printf("Framebuffer size: %d %d\n", width, height);
     
     shader.use();
     glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0); //0 is the texture unit. We set the framebuffer texture to unit 0 (which openGL does automatically).
@@ -261,7 +271,7 @@ int main()
         glEnable(GL_DEPTH_TEST);
         //Input
         processInput(window);
-        
+        //glViewport(0,0,800*2,600*2);
         //Camera settings
         const float radius = 150.0f; //Lower this to make object come closer
         float speed = 0.2f;
@@ -277,6 +287,8 @@ int main()
         
         // first pass
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        
+        //glViewport(0,0,800,600);
         //glViewport(0,0,100,100);
         //glViewport(0, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT*2);
         glEnable(GL_DEPTH_TEST);
@@ -289,17 +301,19 @@ int main()
         normalShader.use();
         glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        
         catModel.Draw(normalShader);
         
         //Second pass
         glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 = our main screen (default screen)
+        //glViewport(0,0,800,600);
         //glViewport(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
         //glDisable(GL_DEPTH_TEST);
         //glDepthFunc(GL_LESS);
         glClearColor(0.0f, 0.1f, 0.0f, 0.3f);
         glClear(GL_COLOR_BUFFER_BIT |GL_DEPTH_BUFFER_BIT);
         shader.use();//glUseProgram(shader.ID);
-        
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
         glUniform3fv(glGetUniformLocation(shader.ID, "cameraPos"), 1, &cameraPos[0]); //Update uniform cameraPos in fragment shader every frame
         glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, &model[0][0]);
@@ -397,6 +411,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width
     // and height will be significantly larger than specified on retina displays
     //glViewport(0, 0, width*2, height*2);
+    //std::cout << width << " " << height << std::endl;
     glViewport(0, 0, width, height);
 }
 

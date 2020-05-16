@@ -23,6 +23,6 @@ void main()
     //FragColor = vec4(texture(normalFrontTexture, gl_FragCoord.xy)); //changing to gl_FragCoord.xyz fixes problem but still error...
     //FragColor = vec4(texture(normalFrontTexture, coord).rgb, 1.0);
     //vec2 uvx = (gl_FragCoord.xy / vec2(2.*800.0, 2.*600.0));
-    vec2 uvx = (gl_FragCoord.xy / vec2(800.0, 600.0));
+    vec2 uvx = (gl_FragCoord.xy / vec2(2*800.0, 2*600.0));
     FragColor = vec4(texture(normalFrontTexture, uvx));
 }
