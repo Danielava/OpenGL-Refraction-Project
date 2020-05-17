@@ -45,7 +45,7 @@ public:
         //glfwInit();
         setupMesh();
     }
-    void Draw(Shader shader) {
+    void Draw(Shader shader, bool renderBack) {
         unsigned int diffuseNr = 1;
         unsigned int specularNr = 1;
         for(unsigned int i = 0; i < textures.size(); i++)
@@ -66,6 +66,15 @@ public:
         //Activate shader???
         // draw mesh
         glBindVertexArray(VAO);
+        /*
+        if(renderBack) {
+            glClearDepth(0.0f);
+            glDepthFunc(GL_GREATER);
+        } else {
+            glDepthFunc(GL_LESS);
+        }*/
+        //glClearDepth(0.0f);
+        //glDepthFunc(GL_GREATER);
         glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
         glBindVertexArray(0); //Remove the VAO settings
     }

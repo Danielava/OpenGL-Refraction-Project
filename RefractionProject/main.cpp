@@ -217,8 +217,7 @@ int main()
     normalShader.use(); //Remember to activate it first!
     glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "projection"), 1, GL_FALSE, &projection[0][0]);
     
-    //PUT ALL TEXTURES INSIDE THE REFRACTION SHADER!
-    //glUniform1f(glGetUniformLocation(shader.ID, "normalFrontTexture"), normalFrontTexture);
+    //Framebuffer for normal front texture
     unsigned int framebuffer;
     glGenFramebuffers(1, &framebuffer);
     glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -254,18 +253,46 @@ int main()
         cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
     //glBindFramebuffer(GL_FRAMEBUFFER, 0);
     
+    /*------------------------------------------------------------------------------*/
+    
+    normalShader.use();
+    //Framebuffer for normal back texture
+    unsigned int framebuffer2;
+    glGenFramebuffers(1, &framebuffer2);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2);
+    // create a color attachment texture
+    unsigned int textureColorbuffer2;
+    glGenTextures(1, &textureColorbuffer2);
+    glActiveTexture(GL_TEXTURE0 + 1);
+    glBindTexture(GL_TEXTURE_2D, textureColorbuffer2);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
+    //Attach your texture to the framebuffer's color buffer
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorbuffer2, 0);
+    // create a renderbuffer object for depth and stencil attachment (we won't be sampling these)
+    unsigned int rbo2;
+    glGenRenderbuffers(1, &rbo2);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo2);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCREEN_WIDTH, SCREEN_HEIGHT); // use a single renderbuffer object for both a depth AND stencil buffer.
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo2); // now actually attach it
+    // now that we actually created the framebuffer and added all attachments we want to check if it is actually complete now
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
+    
+    /*------------------------------------------------------------------------------*/
+    
     /*
         Here we set the normalFrontTexture in default shader to the framebuffers texture.
     */
-    
-    int width, height;
-    glfwGetFramebufferSize(window, &width, &height);
-    //glViewport(0, 0, width*0.5, height*0.5);
-    printf("Framebuffer size: %d %d\n", width, height);
-    
     shader.use();
     glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0); //0 is the texture unit. We set the framebuffer texture to unit 0 (which openGL does automatically).
+    glUniform1i(glGetUniformLocation(shader.ID, "normalBackTexture"), 1);
+    
+    
     // Loop until the user closes the window
+    
     while(!glfwWindowShouldClose(window))
     {
         glEnable(GL_DEPTH_TEST);
@@ -285,13 +312,14 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));    // it's a bit too big for our scene, so scale it down
         
-        // first pass
+        // first pass Render the front normals
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
         
         //glViewport(0,0,800,600);
         //glViewport(0,0,100,100);
         //glViewport(0, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT*2);
         glEnable(GL_DEPTH_TEST);
+        //glDisable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glClearColor(1.0f, 0.1f, 0.1f, 1.0f);
         //glViewport(0, 0, 800.0, 600.0);
@@ -301,13 +329,29 @@ int main()
         normalShader.use();
         glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        //glDepthFunc(GL_GREATER);
+        catModel.Draw(normalShader, false);
         
-        catModel.Draw(normalShader);
+        //Render the back normals
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2);
+        glEnable(GL_DEPTH_TEST);
+        glClearDepth(0.0f);
+        glDepthFunc(GL_GREATER);
+        glClearColor(1.0f, 0.1f, 0.1f, 1.0f); //Depth on this is probably 0
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
+        //glClearDepth(0.0f);
+        //glDepthFunc(GL_GREATER);
+        normalShader.use();
+        glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
+        glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        //glDepthFunc(GL_GREATER);
+        catModel.Draw(normalShader, true);
         
         //Second pass
+        glClearDepth(1.0f); //This function apparently sets some setting on all depth buffers..
         glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 = our main screen (default screen)
-        //glViewport(0,0,800,600);
-        //glViewport(0,0,SCREEN_WIDTH,SCREEN_HEIGHT);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
         //glDisable(GL_DEPTH_TEST);
         //glDepthFunc(GL_LESS);
         glClearColor(0.0f, 0.1f, 0.0f, 0.3f);
@@ -319,7 +363,7 @@ int main()
         glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, &model[0][0]);
         //glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0);
         //glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0);
-        catModel.Draw(shader);
+        catModel.Draw(shader, false);
         /*
            AFTER SETTING THE MODEL, VIEW, PROJ MATRICES => RENDER YOUR TEXTURES
            1. Front normals
@@ -372,7 +416,14 @@ int main()
         //catModel.Draw(shader);
         //backPack.Draw(shader);
         //glDrawArrays(GL_TRIANGLES, 0, 36); //36 is # vertices
-        
+        /*
+        shader.use();
+        glBindVertexArray(skyboxVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture); //??? what does this do?
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glBindVertexArray(0);
+        */
         
         // draw skybox as last
         glDepthFunc(GL_LEQUAL); // change depth function so depth test passes when values are equal to depth buffer's content
