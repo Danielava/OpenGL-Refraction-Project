@@ -230,7 +230,7 @@ int main()
      1. shader.use();
      2. glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0??);
     */
-    glActiveTexture(GL_TEXTURE0 + 0); //Default at 0, here we just set the texture unit of the shader, this unit (0) is used later in glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0); when we want to assign the shader uniform variable to THIS texture-
+    glActiveTexture(GL_TEXTURE0 + 1); //Default at 0, here we just set the texture unit of the shader, this unit (0) is used later in glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0); when we want to assign the shader uniform variable to THIS texture-
         //Also GL_TEXTURE0 + 2 = GL_TEXTURE2
     glBindTexture(GL_TEXTURE_2D, textureColorbuffer); //Just remember the openGL process is always, unsigned int X, glgenerateObj(1,&X), glBindObj(GL_BUILT_IN_VALUE_ X); Then you have created your object
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL); //Craete the texture, no data inside=NULL
@@ -263,7 +263,7 @@ int main()
     // create a color attachment texture
     unsigned int textureColorbuffer2;
     glGenTextures(1, &textureColorbuffer2);
-    glActiveTexture(GL_TEXTURE0 + 1);
+    glActiveTexture(GL_TEXTURE0 + 2);
     glBindTexture(GL_TEXTURE_2D, textureColorbuffer2);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCREEN_WIDTH, SCREEN_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -287,8 +287,8 @@ int main()
         Here we set the normalFrontTexture in default shader to the framebuffers texture.
     */
     shader.use();
-    glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0); //0 is the texture unit. We set the framebuffer texture to unit 0 (which openGL does automatically).
-    glUniform1i(glGetUniformLocation(shader.ID, "normalBackTexture"), 1);
+    glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 1); //0 is the texture unit. We set the framebuffer texture to unit 0 (which openGL does automatically).
+    glUniform1i(glGetUniformLocation(shader.ID, "normalBackTexture"), 2);
     
     
     // Loop until the user closes the window
@@ -312,43 +312,35 @@ int main()
         model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
         model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));    // it's a bit too big for our scene, so scale it down
         
-        // first pass Render the front normals
+        //First Pass
+        //Render the front normals
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-        
-        //glViewport(0,0,800,600);
-        //glViewport(0,0,100,100);
-        //glViewport(0, 0, SCREEN_WIDTH*2, SCREEN_HEIGHT*2);
         glEnable(GL_DEPTH_TEST);
-        //glDisable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
         glClearColor(1.0f, 0.1f, 0.1f, 1.0f);
-        //glViewport(0, 0, 800.0, 600.0);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //Draw the catModel with normalShader and it will end up in our framebuffer
-        //FATAL ERROR!!! I MUST DO SHADER.USE() BEFORE PUTTING IN THE VARIABLES!!!!!
+        //Remember to activate the shader before putting in the variables
         normalShader.use();
         glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        //glDepthFunc(GL_GREATER);
-        catModel.Draw(normalShader, false);
+        glUniform3fv(glGetUniformLocation(normalShader.ID, "cameraPos"), 1, &cameraPos[0]);
+        catModel.Draw(normalShader);
         
         //Render the back normals
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer2);
         glEnable(GL_DEPTH_TEST);
         glClearDepth(0.0f);
         glDepthFunc(GL_GREATER);
-        glClearColor(1.0f, 0.1f, 0.1f, 1.0f); //Depth on this is probably 0
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
-        //glClearDepth(0.0f);
-        //glDepthFunc(GL_GREATER);
+        glClearColor(1.0f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now, this function is what sets the depth to 0.0 as we told the program on glClearDepth(0.0);
         normalShader.use();
-        glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
-        glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        //glDepthFunc(GL_GREATER);
-        catModel.Draw(normalShader, true);
+        //glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
+        //glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
+        catModel.Draw(normalShader);
         
         //Second pass
-        glClearDepth(1.0f); //This function apparently sets some setting on all depth buffers..
+        glClearDepth(1.0f); //This goes into effect when doing glClear(GL_DEPTH_BUFFER_BIT)
         glBindFramebuffer(GL_FRAMEBUFFER, 0); //0 = our main screen (default screen)
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
@@ -361,9 +353,7 @@ int main()
         glUniform3fv(glGetUniformLocation(shader.ID, "cameraPos"), 1, &cameraPos[0]); //Update uniform cameraPos in fragment shader every frame
         glUniformMatrix4fv(glGetUniformLocation(shader.ID, "view"), 1, GL_FALSE, &view[0][0]);
         glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, &model[0][0]);
-        //glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0);
-        //glUniform1i(glGetUniformLocation(shader.ID, "normalFrontTexture"), 0);
-        catModel.Draw(shader, false);
+        catModel.Draw(shader);
         /*
            AFTER SETTING THE MODEL, VIEW, PROJ MATRICES => RENDER YOUR TEXTURES
            1. Front normals

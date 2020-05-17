@@ -4,7 +4,6 @@ out vec4 FragColor;
 in vec2 TexCoords;
 in vec3 Pos;
 in vec3 Normal;
-in vec2 uv;
 
 uniform sampler2D texture_diffuse1;
 uniform vec3 cameraPos;
@@ -13,18 +12,45 @@ uniform samplerCube skybox;
 uniform sampler2D normalFrontTexture;
 uniform sampler2D normalBackTexture;
 
+uniform mat4 model;
+uniform mat4 view;
+uniform mat4 projection;
+
 void main()
 {
-    //FragColor = vec4(Normal.x, Normal.y, Normal.z, 1.0f);
-    //FragColor = vec4(vec3(gl_FragCoord.z), 1.0f);
+    vec2 uv = (gl_FragCoord.xy / vec2(2*800.0, 2*600.0));
     float ratio = 1.00/1.309;
-    vec3 I = normalize(Pos - cameraPos);
-    vec3 R = refract(I, normalize(Normal), ratio);
+    vec4 frontData = texture(normalFrontTexture, uv);
+    vec4 backData = texture(normalBackTexture, uv);
+
+    //Implementation of pseudo-code
+    vec3 N1 = normalize(Normal);
+    vec3 V = normalize(Pos - cameraPos);
+    vec3 T1 = normalize(refract(V, N1, ratio));
+    
+    
+    float d = abs(backData.a - frontData.a); //This always ends up being 0 because depth is between 0,1 so mostly 1..
+    vec3 P2 = Pos + d*T1; //P2 is in world space since Pos is in world space
+    //P2 = vec3(view * vec4(P2, 1.0));
+    //P2 = vec3(projection*view*model * vec4(P2, 1.0));
+    //P2 = vec3(projection*view*model*gl_FragCoord);
+    vec2 newUV = (gl_FragCoord.xy / vec2(2*800.0, 2*600.0)); //Här felet ligger...
+    vec3 N2 = texture(normalBackTexture, newUV).rgb;
+    float ratio2 = 1.309;
+    vec3 T2 = refract(T1, N2, ratio); //normalizing N2 does change it..
+
+    //sample from the cubemap in T2's direction
+    FragColor = vec4(texture(skybox, T2).rgb, 1.0);
+
+    //FragColor = vec4(vec3(gl_FragCoord.z), 1.0f);
+    //float ratio = 1.00/1.309;
+    //vec3 I = normalize(Pos - cameraPos);
+    //vec3 R = refract(I, normalize(Normal), ratio);
     //FragColor = vec4(texture(skybox, R).rgb, 1.0); //Refraction
-    //FragColor = vec4(texture(normalFrontTexture, gl_FragCoord.xy)); //changing to gl_FragCoord.xyz fixes problem but still error...
-    //FragColor = vec4(texture(normalFrontTexture, coord).rgb, 1.0);
-    //vec2 uvx = (gl_FragCoord.xy / vec2(2.*800.0, 2.*600.0));
-    vec2 uvx = (gl_FragCoord.xy / vec2(2*800.0, 2*600.0));
-    //FragColor = vec4(texture(normalFrontTexture, uvx));
-    FragColor = vec4(texture(normalBackTexture, uvx));
+    //vec2 uv = (gl_FragCoord.xy / vec2(2*800.0, 2*600.0));
+    //FragColor = vec4(texture(normalFrontTexture, uv));
+    //float backDepth = texture(normalBackTexture, uv).a;
+    //float frontDepth = texture(normalFrontTexture, uv).a;
+    //FragColor = vec4(texture(normalBackTexture, uv));
+    //FragColor = vec4(vec3(frontDepth), 1.0);
 }
