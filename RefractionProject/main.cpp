@@ -74,6 +74,7 @@ float quadVertices[] = { // vertex attributes for a quad that fills the entire s
 };
 
 //Paths to faces of the cubemap
+
 /*
 vector<std::string> faces
 {
@@ -94,8 +95,8 @@ vector<std::string> faces
     "skybox/space2/bottom.jpg",
     "skybox/space2/front.jpg",
     "skybox/space2/back.jpg"
-};
-*/
+};*/
+
 
 
 vector<std::string> faces
@@ -317,7 +318,7 @@ int main()
         glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
-        glClearColor(1.0f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.0f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         //Draw the catModel with normalShader and it will end up in our framebuffer
         //Remember to activate the shader before putting in the variables
@@ -335,8 +336,6 @@ int main()
         glClearColor(1.0f, 0.1f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now, this function is what sets the depth to 0.0 as we told the program on glClearDepth(0.0);
         normalShader.use();
-        //glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "view"), 1, GL_FALSE, &view[0][0]);
-        //glUniformMatrix4fv(glGetUniformLocation(normalShader.ID, "model"), 1, GL_FALSE, &model[0][0]);
         catModel.Draw(normalShader);
         
         //Second pass

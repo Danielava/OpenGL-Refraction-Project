@@ -6,7 +6,7 @@ layout (location = 2) in vec2 aTexCoords;
 out vec2 TexCoords;
 out vec3 Pos;
 out vec3 Normal;
-out vec3 worldCameraPos;
+out float worldDistance;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -17,7 +17,9 @@ void main()
 {
     TexCoords = aTexCoords;
     Pos = vec3(model * vec4(aPos, 1.0)); //Pos needs to be in world space, here aPos becomes vec4 so we can multiply with 4x4 model matrix
-    worldCameraPos = vec3(model * vec4(cameraPos, 1.0));
+    vec3 worldCameraPos = vec3(model * vec4(cameraPos, 1.0));
+    worldDistance = distance(Pos, worldCameraPos);
+    
     Normal = mat3(transpose(inverse(model))) * aNormal; //Multiply with normal matrix
     //Normal = aNormal;
     gl_Position = projection*view*model*vec4(aPos, 1.0); //Investigate this!!! multiply w pvm?
