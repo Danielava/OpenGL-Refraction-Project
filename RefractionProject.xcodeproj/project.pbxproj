@@ -30,6 +30,10 @@
 		7F5004FA246491C90006004E /* libassimp.5.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libassimp.5.0.0.dylib; path = ../../../../../../usr/local/Cellar/assimp/5.0.1/lib/libassimp.5.0.0.dylib; sourceTree = "<group>"; };
 		7F5004FD246498BF0006004E /* mesh.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = mesh.h; sourceTree = "<group>"; };
 		7F5004FF2466E39B0006004E /* model.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = model.hpp; sourceTree = "<group>"; };
+		7F6F598D2472A08800A251CA /* cube.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cube.obj; sourceTree = "<group>"; };
+		7F6F598E2472A08800A251CA /* cube.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cube.mtl; sourceTree = "<group>"; };
+		7F6F59932472A3CA00A251CA /* sphere.mtl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sphere.mtl; sourceTree = "<group>"; };
+		7F6F59942472A3CA00A251CA /* sphere.obj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = sphere.obj; sourceTree = "<group>"; };
 		7F83F2B1245DDD1A00C3BD8B /* RefractionProject */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = RefractionProject; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F83F2B4245DDD1A00C3BD8B /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		7F83F2BB245DDD3A00C3BD8B /* glad.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = glad.c; sourceTree = "<group>"; };
@@ -308,6 +312,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		7F6F598C2472A07D00A251CA /* cube */ = {
+			isa = PBXGroup;
+			children = (
+				7F6F598E2472A08800A251CA /* cube.mtl */,
+				7F6F598D2472A08800A251CA /* cube.obj */,
+			);
+			path = cube;
+			sourceTree = "<group>";
+		};
+		7F6F59922472A3BE00A251CA /* sphere */ = {
+			isa = PBXGroup;
+			children = (
+				7F6F59932472A3CA00A251CA /* sphere.mtl */,
+				7F6F59942472A3CA00A251CA /* sphere.obj */,
+			);
+			path = sphere;
+			sourceTree = "<group>";
+		};
 		7F83F2A8245DDD1A00C3BD8B = {
 			isa = PBXGroup;
 			children = (
@@ -616,6 +638,8 @@
 		7FA2184D2469DC8F00F6B2B4 /* models */ = {
 			isa = PBXGroup;
 			children = (
+				7F6F59922472A3BE00A251CA /* sphere */,
+				7F6F598C2472A07D00A251CA /* cube */,
 				7FA21852246A85EE00F6B2B4 /* backpack */,
 				7FA2184E2469DC9800F6B2B4 /* cat */,
 			);
