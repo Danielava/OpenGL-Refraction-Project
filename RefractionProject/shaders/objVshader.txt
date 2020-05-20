@@ -17,5 +17,5 @@ void main()
     Pos = vec3(model * vec4(aPos, 1.0)); //Pos needs to be in world space, here aPos becomes vec4 so we can multiply with 4x4 model matrix
     Normal = mat3(transpose(inverse(model))) * aNormal;//(normalize(aNormal) * 0.5f ) + 0.5f; //Multiply with normal matrix
     gl_Position = projection * view * model * vec4(aPos, 1.0);
-    //uv = (gl_Position.xy / gl_Position.w) * (0.5) + vec2(0.5);
+    //uv = (gl_Position.xy / gl_Position.w) * (0.5) + vec2(0.5); //Remember div with w turns it into -1,1 range.
 }

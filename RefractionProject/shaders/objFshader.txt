@@ -40,8 +40,7 @@ void main()
     vec3 T2 = refract(T1, -N2, ratio);
     
     //sample from the cubemap in T2's direction
-    FragColor = vec4(texture(skybox, T2).rgb, 1.0);
-
+    FragColor = vec4(texture(skybox, T2).rgb, 1.0)+vec4(0.0, 0.1, 0.1, 0.0);
 /*
     //texture(normalBackTexture, newUV).a == 0.0 ||texture(normalBackTexture, newUV).a == 1.0
     if(true) { //Set this to true for cool effect
